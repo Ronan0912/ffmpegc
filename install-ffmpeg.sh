@@ -20,7 +20,8 @@ echo "install gas-* perl script"
 
 # No need to change this since xcode build will only compile in the
 # necessary bits from the libraries we create
-ARCHS="armv7 armv7s i386"
+#ARCHS="armv7 armv7s x86_64"
+ARCHS="x86_64"
 
 DEVELOPER=`xcode-select -print-path`
 
@@ -74,11 +75,11 @@ set -e # back to regular "bail out on error" mode
 
 for ARCH in ${ARCHS}
 do
-	if [ "${ARCH}" == "i386" ];
+	if [ "${ARCH}" == "x86_64" ];
 	then
 		PLATFORM="iPhoneSimulator"
-        EXTRA_CONFIG="--arch=i386 --disable-asm --enable-cross-compile --target-os=darwin --cpu=i386"
-        EXTRA_CFLAGS="-arch i386"
+        EXTRA_CONFIG="--arch=x86_64 --disable-asm --enable-cross-compile --target-os=darwin --cpu=x86_64"
+        EXTRA_CFLAGS="-arch x86_64"
         EXTRA_LDFLAGS="-I${DEVELOPER}/Platforms/${PLATFORM}.platform/Developer/SDKs/${PLATFORM}${SDKVERSION}.sdk/usr/lib -mfpu=neon"
 	else
 		PLATFORM="iPhoneOS"
@@ -89,7 +90,7 @@ do
 
 	mkdir -p "${INTERDIR}/${ARCH}"
 
-    ./configure --prefix="${INTERDIR}/${ARCH}" --disable-armv6 --disable-armv6t2 --disable-ffmpeg --disable-ffplay --disable-ffprobe --disable-ffserver --disable-iconv --disable-bzlib --enable-avresample --sysroot="${DEVELOPER}/Platforms/${PLATFORM}.platform/Developer/SDKs/${PLATFORM}${SDKVERSION}.sdk" --cc="${DEVELOPER}/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang" --as='/usr/local/bin/gas-preprocessor.pl' --extra-cflags="${EXTRA_CFLAGS} -miphoneos-version-min=${SDKVERSION} -I${OUTPUTDIR}/include" --extra-ldflags="-arch ${ARCH} ${EXTRA_LDFLAGS} -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/${PLATFORM}.platform/Developer/SDKs/${PLATFORM}${SDKVERSION}.sdk -miphoneos-version-min=${SDKVERSION} -L${OUTPUTDIR}/lib" ${EXTRA_CONFIG} --enable-pic --extra-cxxflags="$CPPFLAGS -I${OUTPUTDIR}/include -isysroot ${DEVELOPER}/Platforms/${PLATFORM}.platform/Developer/SDKs/${PLATFORM}${SDKVERSION}.sdk"
+    ./configure --prefix="${INTERDIR}/${ARCH}" --disable-armv6 --disable-armv6t2 --disable-ffmpeg --disable-ffplay --disable-ffprobe --disable-ffserver --disable-iconv --disable-bzlib --enable-avresample --enable-libx264 --enable-gpl --sysroot="${DEVELOPER}/Platforms/${PLATFORM}.platform/Developer/SDKs/${PLATFORM}${SDKVERSION}.sdk" --cc="${DEVELOPER}/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang" --as='/usr/local/bin/gas-preprocessor.pl' --extra-cflags="${EXTRA_CFLAGS} -miphoneos-version-min=${SDKVERSION} -I${OUTPUTDIR}/include" --extra-ldflags="-arch ${ARCH} ${EXTRA_LDFLAGS} -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/${PLATFORM}.platform/Developer/SDKs/${PLATFORM}${SDKVERSION}.sdk -miphoneos-version-min=${SDKVERSION} -L${OUTPUTDIR}/lib" ${EXTRA_CONFIG} --enable-pic --extra-cxxflags="$CPPFLAGS -I${OUTPUTDIR}/include -isysroot ${DEVELOPER}/Platforms/${PLATFORM}.platform/Developer/SDKs/${PLATFORM}${SDKVERSION}.sdk"
 
     make && make install && make clean
 	 
@@ -102,7 +103,7 @@ for file in *.a
 do
 
 cd ${INTERDIR}
-xcrun -sdk iphoneos lipo -output universal/lib/$file  -create -arch armv7 armv7/lib/$file -arch armv7s armv7s/lib/$file -arch i386 i386/lib/$file
+xcrun -sdk iphoneos lipo -output universal/lib/$file  -create -arch armv7 armv7/lib/$file -arch armv7s armv7s/lib/$file -arch x86_64 x86_64/lib/$file
 echo "Universal $file created."
 
 done
