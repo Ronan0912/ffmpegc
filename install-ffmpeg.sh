@@ -20,8 +20,8 @@ echo "install gas-* perl script"
 
 # No need to change this since xcode build will only compile in the
 # necessary bits from the libraries we create
-#ARCHS="armv7 armv7s x86_64"
-ARCHS="x86_64"
+ARCHS="armv7 armv7s x86_64"
+#ARCHS="x86_64"
 
 DEVELOPER=`xcode-select -print-path`
 
