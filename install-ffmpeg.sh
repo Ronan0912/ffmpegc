@@ -3,7 +3,7 @@
 ###########################################################################
 #  Choose your ffmpeg version and your currently-installed iOS SDK version:
 #
-VERSION="2.0.2"
+VERSION="1.2.7"
 SDKVERSION="7.1"
 
 
